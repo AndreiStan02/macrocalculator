@@ -6,7 +6,7 @@ class ActivityFactor(Enum):
     VERY = 3
 
 class UserProfile:
-    def __init__(self, name, weight, age, height, gender, activity, fat_per, goal_per, all_measures = [], week_measures = []):
+    def __init__(self, name, weight, age, height, gender, activity, fat_per, goal_per, goal_time, cal_intake,all_measures = [], week_measures = []):
         self.name = name
         self.weight = weight
         self.age = age
@@ -20,9 +20,9 @@ class UserProfile:
             self.activity = ActivityFactor.VERY 
         self.fat_per = fat_per
         self.goal_per = goal_per
-        self.goal_time = get_goal_time(self) * 7
+        self.goal_time = goal_time
         self.tdee = get_tdee(self)
-        self.cal_intake = get_cal(self)
+        self.cal_intake = cal_intake
         if all_measures == []:
             self.all_measures = [(weight, fat_per)]
         else:
@@ -31,12 +31,6 @@ class UserProfile:
             self.week_measures = [(weight, fat_per)]
         else:
             self.week_measures = week_measures
-
-    def update_weight_fat(self, new_weight, new_fat):
-        self.weight = new_weight
-        self.fat_per = new_fat
-        self.week_measures.append((new_weight, new_fat))
-        self.all_measures.append((new_weight, new_fat))
 
 
 def get_tdee(profile):
@@ -56,35 +50,25 @@ def get_tdee(profile):
     return (10 * profile.weight + 6.25 * profile.height - 5 * profile.age - 161) * activity_factor
 
 def get_cal(profile):
-    target_weight = (profile.weight - (profile.weight*profile.fat_per)) / (1 - profile.goal_per)
+    target_weight = (profile.weight - (profile.weight*(profile.fat_per/100))) / (1 - (profile.goal_per/100))
     total_cal = 7700 * (profile.weight - target_weight)
     cal_per_day = total_cal/profile.goal_time
     return profile.tdee - cal_per_day
 
 def get_goal_time(profile):
-    target_weight = (profile.weight - (profile.weight*profile.fat_per)) / (1 - profile.goal_per)
-    return (profile.weight - target_weight)/0.5
+    target_weight = (profile.weight - (profile.weight*(profile.fat_per/100))) / (1 - profile.goal_per)
+    return ((profile.weight-(profile.weight + target_weight))/0.5)*7
 
-def add_measure(profile, weight, fat_per):
-    profile.update_weight(weight)
-    profile.update_fat_per(fat_per)
-
-    profile.all_measures.append((weight, fat_per))
-    profile.week_measures.append((weight, fat_per))
-
-    if len(profile.week_measures) >= 7:
-        total_weight = 0
-        avr_weight = 0
-        espected_weight = profile.week_measures[0][0] - 0.5
-        for measure in profile.week_measures:
-            total_weight += measure[0]
-        avr_weight = total_weight/7
-        if abs(espected_weight - avr_weight) >= 0.5:
-            if espected_weight > avr_weight:
-                profile.tdee += 100
-            else:
-                profile.tdee -= 100
-        profile.week_measures = []
-    
-    #just say how many days left there are and how the weight has been the other days
-    #MAYBE THIS BETTER IN SESSION
+def calculate_cals(profile):
+    total_weight = 0
+    avr_weight = 0
+    espected_weight = profile.week_measures[0][0] - 0.5
+    for measure in profile.week_measures:
+        total_weight += measure[0]
+    avr_weight = total_weight/7
+    if abs(espected_weight - avr_weight) >= 0.5:
+        if espected_weight > avr_weight:
+            profile.tdee += 100
+        else:
+            profile.tdee -= 100
+    profile.week_measures = []

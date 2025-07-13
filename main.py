@@ -1,11 +1,13 @@
+import json
+
 import plotext as plt
 from session import Session
-from userProfile import ActivityFactor
+from userProfile import ActivityFactor, get_cal, get_goal_time, calculate_cals
 
 session = Session()
-user_exists = False
 
 def log_create_acc():
+    user_exists = False
     while(True):
         print("Write 'log' or 'create' to login or create and account!")
         command = input()
@@ -36,10 +38,10 @@ def log_create_acc():
                         user_exists = True
                         print("User already exists")
 
-                if user_exists: break
+                if user_exists == True: break
                     
                 print("What is you weight?")
-                user_weight = int(input())
+                user_weight = float(input())
                 if user_weight == "exit":
                     break
                 print("What is you age?")
@@ -47,7 +49,7 @@ def log_create_acc():
                 if user_age == "exit":
                     break
                 print("What is you height?")
-                user_height = int(input())
+                user_height = float(input())
                 if user_height == "exit":
                     break
                 print("What is you gender?")
@@ -81,7 +83,56 @@ def register_data():
     session.update_weight_currentprofile(new_weight, new_fat_per)
 
 def show_status():
-    pass
+    
+    days_left = session.currentProfile.goal_time
+    with open('users.json', 'r') as f:
+        data = json.load(f)
+
+    for profile in data:
+        if profile["name"] == session.currentProfile.name:
+            profile["goal_time"] -= 1
+
+    with open('users.json', 'w') as f:
+        json.dump(data, f, indent=4)
+
+
+    if len(session.currentProfile.week_measures) >= 7:
+        weight = [x[0] for x in session.currentProfile.week_measures]
+        fat_per = [x[1] for x in session.currentProfile.week_measures]
+        x = list(range(1, len(session.currentProfile.week_measures) + 1))
+
+        plt.clear_figure()  # clear any previous plot
+        plt.plot(x, weight, marker='dot')
+        plt.title("Weight Progress")
+        plt.xlabel("Measurement")
+        plt.ylabel("Weight (kg)")
+        plt.show()
+
+        # --- Body Fat Plot ---
+        plt.clear_figure()  # clear again for next plot
+        plt.plot(x, fat_per, marker='dot', color='red')
+        plt.title("Body Fat Percentage Progress")
+        plt.xlabel("Measurement")
+        plt.ylabel("Body Fat (%)")
+        plt.show()
+
+        with open('users.json', 'r') as f:
+            data = json.load(f)
+
+        for profile in data:
+            if profile["name"] == session.currentProfile.name:
+                profile["cal_intake"] = get_cal(session.currentProfile)
+                session.currentProfile.cal_intake = get_cal(session.currentProfile)
+                profile["week_measures"] = []
+
+        with open('users.json', 'w') as f:
+            json.dump(data, f, indent=4)
+        print("You completed a week, this is your week progress!!")
+
+
+    current_cals = session.currentProfile.cal_intake
+    
+    print("You need to eat ",int(current_cals)," kcals for ",int(days_left)," days to get to your goal, KEEP IT UP!!!!")
     
 log_create_acc()
 show_status()
