@@ -1,0 +1,24 @@
+[
+    {
+        "name": "andrei",
+        "weight": 79,
+        "age": 22,
+        "height": 178,
+        "gender": "male",
+        "activity": "MODERATE",
+        "fat_per": 22.0,
+        "goal_per": 18.0,
+        "all_measures": [
+            [
+                79,
+                22.0
+            ]
+        ],
+        "week_measures": [
+            [
+                79,
+                22.0
+            ]
+        ]
+    }
+]

@@ -9,7 +9,7 @@ class Session:
         self.get_profiles()
 
     def createProfile(self, name, weight, age, height, gender, activity, fat_per, goal_per):
-        data = {
+        user = {
             "name": name,
             "weight":weight,
             "age":age,
@@ -23,21 +23,29 @@ class Session:
         }
 
         new_profile = UserProfile(name, weight, age, height, gender, activity, fat_per, goal_per)
-        if self.profiles[new_profile.name]:
-            raise Exception("User already exists")
-        with open('data.json', 'w') as f:
-            json.dump(data, f)
+        for tupple in self.profiles:
+            if tupple[0] == new_profile.name:
+                raise Exception("User already exists")
+            
+        with open('users.json', 'r') as f:
+            data = json.load(f)
+
+        data.append(user)
+
+        with open('users.json', 'w') as f:
+            json.dump(data, f, indent=4)
         self.get_profiles()
 
     def logIn(self, name):
-        if self.profiles[name]:
-            self.currentProfile = self.profiles[name]
-        else:
-            raise Exception("No user with this name exists")
+        for tupple in self.profiles:
+            if tupple[0] == name:
+                self.currentProfile = tupple[1]
+            else:
+                raise Exception("No user with this name exists")
 
     def get_profiles(self):
         with open("users.json", "r") as file:
             data = json.load(file)
         for profile in data:
-            aux_profile = UserProfile(data.name, data.weight, data.age, data.height, data.gender, data.activity, data.fat_per, data.goal_per, data.all_measures, data.week_measures)
-            self.profiles.append((data.name, aux_profile))
+            aux_profile = UserProfile(profile["name"], profile["weight"], profile["age"], profile["height"], profile["gender"], profile["activity"], profile["fat_per"], profile["goal_per"], profile["all_measures"], profile["week_measures"])
+            self.profiles.append((profile["name"], aux_profile))

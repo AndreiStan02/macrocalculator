@@ -12,7 +12,12 @@ class UserProfile:
         self.age = age
         self.height = height
         self.gender = gender
-        self.activity = activity
+        if activity == "LIGHT":
+            self.activity = ActivityFactor.LIGHT
+        elif activity == "MODERATE":
+            self.activity = ActivityFactor.MODERATE
+        else:
+            self.activity = ActivityFactor.VERY 
         self.fat_per = fat_per
         self.goal_per = goal_per
         self.goal_time = get_goal_time(self) * 7
@@ -78,18 +83,7 @@ def add_measure(profile, weight, fat_per):
                 profile.tdee += 100
             else:
                 profile.tdee -= 100
-        profile.weeñ_measures = []
+        profile.week_measures = []
     
     #just say how many days left there are and how the weight has been the other days
     #MAYBE THIS BETTER IN SESSION
-
-
-yo = UserProfile("andrei", 80, 23, 178, "male", ActivityFactor.MODERATE, 0.22, 0.18)
-print(yo.tdee)
-add_measure(yo, 76, 22)
-add_measure(yo, 76, 22)
-add_measure(yo, 74, 22)
-add_measure(yo, 73, 22)
-add_measure(yo, 75, 22)
-add_measure(yo, 72, 22)
-print(yo.tdee)
