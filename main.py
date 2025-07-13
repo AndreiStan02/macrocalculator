@@ -10,6 +10,7 @@ def log_create_acc():
         print("Write 'log' or 'create' to login or create and account!")
         command = input()
         if command == "log":
+            user_loged = True
             print("Write your user name to log in, or exit to go back")
             while(True):
                 user_name = input()
@@ -21,6 +22,7 @@ def log_create_acc():
                     break
                 else:
                     print("User not found, try again")
+            register_data()
             break
         elif command == "create":
             while(True):
@@ -71,4 +73,15 @@ def log_create_acc():
             break
         print("Wrong order, try again.")
 
+def register_data():
+    print("Tell us your current weight")
+    new_weight = float(input())
+    print("Tell us your current body fat percentage")
+    new_fat_per = float(input())
+    session.update_weight_currentprofile(new_weight, new_fat_per)
+
+def show_status():
+    pass
+    
 log_create_acc()
+show_status()

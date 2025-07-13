@@ -21,12 +21,7 @@ class Session:
             "all_measures":[(weight,fat_per)],
             "week_measures":[(weight,fat_per)],
         }
-
-        new_profile = UserProfile(name, weight, age, height, gender, activity, fat_per, goal_per)
-        for tupple in self.profiles:
-            if tupple[0] == new_profile.name:
-                raise Exception("User already exists")
-            
+   
         with open('users.json', 'r') as f:
             data = json.load(f)
 
@@ -49,3 +44,18 @@ class Session:
         for profile in data:
             aux_profile = UserProfile(profile["name"], profile["weight"], profile["age"], profile["height"], profile["gender"], profile["activity"], profile["fat_per"], profile["goal_per"], profile["all_measures"], profile["week_measures"])
             self.profiles.append((profile["name"], aux_profile))
+
+    def update_weight_currentprofile(self,new_weight, new_fat_per):
+        with open('users.json', 'r') as f:
+            data = json.load(f)
+
+        for profile in data:
+            if profile["name"] == self.currentProfile.name:
+                profile["weight"] = new_weight
+                profile["fat_per"] = new_fat_per
+                profile["all_measures"].append((new_weight, new_fat_per))
+                profile["week_measures"].append((new_weight, new_fat_per))
+
+        with open('users.json', 'w') as f:
+            json.dump(data, f, indent=4)
+        self.get_profiles()

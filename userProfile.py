@@ -32,11 +32,12 @@ class UserProfile:
         else:
             self.week_measures = week_measures
 
-    def update_weight(self, new_weight):
+    def update_weight_fat(self, new_weight, new_fat):
         self.weight = new_weight
-
-    def update_fat_per(self, new_fat):
         self.fat_per = new_fat
+        self.week_measures.append((new_weight, new_fat))
+        self.all_measures.append((new_weight, new_fat))
+
 
 def get_tdee(profile):
     activity_factor = 0

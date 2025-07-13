@@ -1,7 +1,7 @@
 [
     {
         "name": "andrei",
-        "weight": 79,
+        "weight": 79.0,
         "age": 22,
         "height": 178,
         "gender": "male",
