@@ -30,6 +30,7 @@ class Session:
             "cal_intake": self.get_cal(weight,fat_per, goal_per, int(((weight-(weight + (weight - (weight*(fat_per/100))) / (1 - goal_per)))/0.5)*7), tdee),
             "all_measures":[(weight,fat_per)],
             "week_measures":[(weight,fat_per)],
+            "last_day":"",
         }
    
         with open('users.json', 'r') as f:
