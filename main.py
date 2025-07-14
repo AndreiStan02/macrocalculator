@@ -174,7 +174,7 @@ log_create_acc()
 days_left = session.currentProfile.goal_time
 
 while True:
-    print("Write 'register' to refister new data,'week' to see your week status, 'global' for global status and 'exit' for quiting!\n")
+    print("Write 'register' to register new data, 'week' to see your week status, 'global' for global status and 'exit' for quiting!\n")
     command = input()
     if command == "register":
         register_data()
